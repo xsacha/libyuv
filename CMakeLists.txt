@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 # CMakeLists for libyuv
 # Originally created for "roxlu build system" to compile libyuv on windows
