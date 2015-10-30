@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(libyuv VERSION 1514)
+project(libyuv VERSION 1514.0)
 
 # CMakeLists for libyuv
 # Originally created for "roxlu build system" to compile libyuv on windows
@@ -188,10 +188,6 @@ if(NACL AND NACL_LIBC STREQUAL "newlib")
   target_link_libraries(libyuv_unittest glibc-compat)
 endif()
 
-#install(TARGETS ${ly_lib_name} DESTINATION lib)
-#install(FILES ${ly_header_files} DESTINATION include/libyuv)
-#install(FILES ${ly_inc_dir}/libyuv.h DESTINATION include/)
-
 ################## install #######################
 set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
 
@@ -204,16 +200,13 @@ set(targets_export_name "${PROJECT_NAME}Targets")
 set(namespace "${PROJECT_NAME}::")
 
 include(CMakePackageConfigHelpers)
-
-write_basic_package_version_file(
-    "${version_config}" COMPATIBILITY SameMajorVersion
-)
+write_basic_package_version_file("${version_config}" COMPATIBILITY SameMajorVersion)
 
 # Note: variable 'targets_export_name' used
 configure_file("cmake/Config.cmake.in" "${project_config}" @ONLY)
 
 install(
-    TARGETS ${ly_lib_name}
+    TARGETS "${ly_lib_name}"
     EXPORT "${targets_export_name}"
     LIBRARY DESTINATION "lib"
     ARCHIVE DESTINATION "lib"
@@ -221,7 +214,7 @@ install(
     INCLUDES DESTINATION "${include_install_dir}/libyuv"
 )
 
-install(FILES ${ly_header_files} DESTINATION "${include_install_dir}/libyuv")
+install(FILES ${ly_header_files} DESTINATION "${include_install_dir}/${PROJECT_NAME}")
 install(FILES ${ly_inc_dir}/libyuv.h DESTINATION include/)
 install(FILES "${project_config}" "${version_config}" DESTINATION "${config_install_dir}")
 install(EXPORT "${targets_export_name}" NAMESPACE "${namespace}" DESTINATION "${config_install_dir}")
