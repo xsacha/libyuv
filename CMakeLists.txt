@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
+project(libyuv VERSION 1514)
+
 # CMakeLists for libyuv
 # Originally created for "roxlu build system" to compile libyuv on windows
 # Run with -DTEST=ON to build unit tests
@@ -190,15 +192,36 @@ endif()
 #install(FILES ${ly_header_files} DESTINATION include/libyuv)
 #install(FILES ${ly_inc_dir}/libyuv.h DESTINATION include/)
 
-set(prefix ${CMAKE_INSTALL_PREFIX})
-set(exec_prefix "\${prefix}")
-set(libdir "\${exec_prefix}/lib${LIB_SUFFIX}")
-set(bindir "\${exec_prefix}/bin")
-set(includedir "\${prefix}/include")
+################## install #######################
+set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
 
-CONFIGURE_FILE("${ly_base_dir}/libyuv.pc.in" "${ly_base_dir}/libyuv.pc" @ONLY)
+set(config_install_dir "lib/cmake/${PROJECT_NAME}")
+set(include_install_dir "include")
 
-install(TARGETS ${ly_lib_name} DESTINATION lib)
-install(FILES ${ly_header_files} DESTINATION include/libyuv)
+set(version_config "${generated_dir}/${PROJECT_NAME}ConfigVersion.cmake")
+set(project_config "${generated_dir}/${PROJECT_NAME}Config.cmake")
+set(targets_export_name "${PROJECT_NAME}Targets")
+set(namespace "${PROJECT_NAME}::")
+
+include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(
+    "${version_config}" COMPATIBILITY SameMajorVersion
+)
+
+# Note: variable 'targets_export_name' used
+configure_file("cmake/Config.cmake.in" "${project_config}" @ONLY)
+
+install(
+    TARGETS ${ly_lib_name}
+    EXPORT "${targets_export_name}"
+    LIBRARY DESTINATION "lib"
+    ARCHIVE DESTINATION "lib"
+    RUNTIME DESTINATION "bin"
+    INCLUDES DESTINATION "${include_install_dir}/libyuv"
+)
+
+install(FILES ${ly_header_files} DESTINATION "${include_install_dir}/libyuv")
 install(FILES ${ly_inc_dir}/libyuv.h DESTINATION include/)
-INSTALL(FILES "${ly_base_dir}/libyuv.pc" DESTINATION "lib${LIB_SUFFIX}/pkgconfig")
+install(FILES "${project_config}" "${version_config}" DESTINATION "${config_install_dir}")
+install(EXPORT "${targets_export_name}" NAMESPACE "${namespace}" DESTINATION "${config_install_dir}")
