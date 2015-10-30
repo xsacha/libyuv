@@ -137,16 +137,22 @@ set(ly_header_files
 
 include_directories(${ly_inc_dir})
 
-add_library(${ly_lib_name} STATIC ${ly_source_files})
+add_library(${ly_lib_name} ${ly_source_files})
 
-add_executable(convert ${ly_base_dir}/util/convert.cc)
-target_link_libraries(convert ${ly_lib_name})
+option(BUILD_EXAMPLES "Build console apps" OFF)
+if(BUILD_EXAMPLES)
+  add_executable(convert ${ly_base_dir}/util/convert.cc)
+  target_link_libraries(convert ${ly_lib_name})
+endif()
 
-include(FindJPEG)
-if (JPEG_FOUND)
-  include_directories(${JPEG_INCLUDE_DIR})
-  target_link_libraries(convert ${JPEG_LIBRARY})
-  add_definitions(-DHAVE_JPEG)
+option(LIBYUV_USE_JPEG "Use libjpeg for internal yuv conversions" OFF)
+if(LIBYUV_USE_JPEG)
+  include(FindJPEG)
+  if (JPEG_FOUND)
+	include_directories(${JPEG_INCLUDE_DIR})
+	target_link_libraries(convert ${JPEG_LIBRARY})
+	add_definitions(-DHAVE_JPEG)
+  endif()
 endif()
 
 if(TEST)
