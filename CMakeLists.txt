@@ -211,7 +211,7 @@ install(
     LIBRARY DESTINATION "lib"
     ARCHIVE DESTINATION "lib"
     RUNTIME DESTINATION "bin"
-    INCLUDES DESTINATION "${include_install_dir}/libyuv"
+    INCLUDES DESTINATION "${include_install_dir}"
 )
 
 install(FILES ${ly_header_files} DESTINATION "${include_install_dir}/${PROJECT_NAME}")
